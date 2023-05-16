@@ -53,6 +53,11 @@ public class PaintView extends View {
         // on below line we are creating
         // a new variable for our paint
         otherPaint = new Paint();
+        // on below line we are setting color to our paint.
+        otherPaint.setColor(Color.WHITE);
+
+        // on below line we are setting style to out paint.
+        otherPaint.setStyle(Paint.Style.FILL);
     }
 
     // below method is use to generate px from DP.
@@ -68,33 +73,21 @@ public class PaintView extends View {
         // back color to our screen which is green
         canvas.drawPaint(outerPaint);
 
-        // on below line we are setting color to our paint.
-        otherPaint.setColor(Color.WHITE);
-
-        // on below line we are setting style to out paint.
-        otherPaint.setStyle(Paint.Style.FILL);
-
-        // below 4 lines of code is use to
-        // create white rectangle of screen
-        canvas.drawRect(
+        Racket racket = new Racket(
                 getLeft() + getWidth() / 3,
                 getTop() + 3* getHeight() / 4,
                 getRight() - getWidth() / 3,
-                getBottom() - getHeight() / 4, otherPaint);
+                getBottom() - getHeight() / 4);
 
-        /*
-            canvas.save();
-            canvas.rotate(45);
-            canvas.drawRect(166, 748, 314, 890, paint);
-            canvas.restore();
-         */
-
-        // on below line we are changing the color for our paint.
-        otherPaint.setColor(getResources().getColor(R.color.white));
+        canvas.save();
+//        canvas.rotate(10);
+        racket.draw(canvas,otherPaint);
+        canvas.restore();
 
         // on below line we are drawing a circle and passing
         // width, height, left arc and paint to add color.
-        canvas.drawCircle(getWidth() / 2, getHeight() / 2, arcLeft, otherPaint);
+        Ball ball = new Ball(getWidth() / 2,getHeight() / 2,arcLeft);
+        ball.draw(canvas,otherPaint);
 
         // on below line we are adding text using paint in our canvas.
         canvas.drawText("Pong", (float) (getWidth() * 0.43), (float) (getHeight() * 0.97), textPaint);
