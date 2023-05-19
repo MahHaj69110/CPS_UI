@@ -9,7 +9,7 @@ import android.graphics.Paint;
 import android.util.DisplayMetrics;
 import android.view.View;
 
-public class PaintView extends View {
+public class PongView extends View {
 
     // below we are creating variables for our paint
     Paint otherPaint, outerPaint, textPaint;
@@ -18,7 +18,7 @@ public class PaintView extends View {
     float arcLeft;
 
     @SuppressLint("ResourceAsColor")
-    public PaintView(Context context) {
+    public PongView(Context context) {
         super(context);
 
         // on below line we are initializing our paint variable for our text
