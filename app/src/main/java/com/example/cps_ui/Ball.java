@@ -3,6 +3,8 @@ package com.example.cps_ui;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
+import androidx.core.util.Pair;
+
 public class Ball {
     private float cx;
     private float cy;
@@ -18,4 +20,12 @@ public class Ball {
         canvas.drawCircle(cx, cy, radius, paint);
     }
 
+    public void updateLocation(Pair<Float, Float> pos) {
+        this.cx = pos.first;
+        this.cy = pos.second;
+    }
+
+    public Pair<Float, Float> getPosition() {
+        return Pair.create(cx,cy);
+    }
 }

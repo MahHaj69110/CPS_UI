@@ -17,6 +17,9 @@ public class PongView extends View {
     // and a floating variable for our left arc.
     float arcLeft;
 
+    private Ball ball;
+    private Racket racket;
+
     @SuppressLint("ResourceAsColor")
     public PongView(Context context) {
         super(context);
@@ -73,12 +76,6 @@ public class PongView extends View {
         // back color to our screen which is green
         canvas.drawPaint(outerPaint);
 
-        Racket racket = new Racket(
-                getLeft() + getWidth() / 3,
-                getTop() + 3* getHeight() / 4,
-                getRight() - getWidth() / 3,
-                getBottom() - getHeight() / 4);
-
         canvas.save();
 //        canvas.rotate(10);
         racket.draw(canvas,otherPaint);
@@ -86,11 +83,17 @@ public class PongView extends View {
 
         // on below line we are drawing a circle and passing
         // width, height, left arc and paint to add color.
-        Ball ball = new Ball(getWidth() / 2,getHeight() / 2,arcLeft);
         ball.draw(canvas,otherPaint);
 
         // on below line we are adding text using paint in our canvas.
         canvas.drawText("Pong", (float) (getWidth() * 0.43), (float) (getHeight() * 0.97), textPaint);
+    }
+    public void updateScreen(){
+        invalidate();
+    }
+
+    public float getArcLeft() {
+        return arcLeft;
     }
 }
 

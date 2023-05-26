@@ -1,6 +1,7 @@
 package com.example.cps_ui;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.util.Pair;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,28 +18,19 @@ public class MainActivity extends AppCompatActivity {
 
     private RelativeLayout relativeLayout;
     private GameLoop gameLoop;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FloatingActionButton restartGameBtn = (FloatingActionButton) findViewById(R.id.restart_game_btn);
         Intent intent = getIntent();
         String sensorType = intent.getStringExtra("sensor_type");
-        restartGameBtn.setOnClickListener(v -> {
-            gameLoop.pushBall();
-        });
 
-        gameView = (GameView) findViewById(R.id.game_view);
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         Pair<Integer,Integer> screen = new Pair<>(displayMetrics.widthPixels, displayMetrics.heightPixels);
-        gameLoop = new GameLoop(gameView,sensorManager,sensorType, 16,screen);
-        gameLoop.start();
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // initializing our view.
         relativeLayout = findViewById(R.id.idConstView);
@@ -47,6 +39,12 @@ public class MainActivity extends AppCompatActivity {
         // its view to our relative layout.
         PongView paintView = new PongView(this);
         relativeLayout.addView(paintView);
+
+        gameLoop = new GameLoop(paintView,sensorManager,sensorType, 16,screen);
+        gameLoop.start();
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
     @Override
     public void onBackPressed() {

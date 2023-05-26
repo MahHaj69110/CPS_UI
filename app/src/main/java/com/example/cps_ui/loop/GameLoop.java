@@ -2,28 +2,21 @@ package com.example.cps_ui.loop;
 
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
-import android.util.Log;
-
+import androidx.core.util.Pair;
 import com.example.cps_ui.Ball;
 import com.example.cps_ui.PongView;
-
-import java.util.Random;
-
-import Coordinates.Ball;
-import LocationCalculator.LocationCalculator;
-import LocationCalculator.GyroscopeLocationCalculator;
-import LocationCalculator.GravityLocationCalculator;
-import LocationCalculator.MovementRecognizer;
-
-import Model.Pair;
-import Model.State;
+import com.example.cps_ui.Racket;
+import com.example.cps_ui.locationCalculator.AccelerometerLocationCalculator;
+import com.example.cps_ui.locationCalculator.GyroscopeLocationCalculator;
 
 public class GameLoop extends Thread{
 
     private boolean running;
     private PongView view;
     private Ball ball;
-    private LocationCalculator calculator;
+    private Racket racket;
+    private AccelerometerLocationCalculator accelerometerLocationCalculator;
+    private GyroscopeLocationCalculator gyroscopeLocationCalculator;
     private int deltaT;
 
     public GameLoop(PongView view, SensorManager sensorManager, String sensorType, int dt, Pair<Integer,Integer> screen){
@@ -31,36 +24,39 @@ public class GameLoop extends Thread{
         this.running = true;
         this.deltaT = dt;
         Sensor sensor;
-        ball = new Ball();
+        Racket racket = new Racket(
+                view.getLeft() + view.getWidth() / 3,
+                view.getTop() + 3* view.getHeight() / 4,
+                view.getRight() - view.getWidth() / 3,
+                view.getBottom() - view.getHeight() / 4);
+        Ball ball = new Ball(view.getWidth() / 2,view.getHeight() / 2, view.getArcLeft());
+
         MovementRecognizer movementRecognizer = new MovementRecognizer(screen.getFirst(),screen.getSecond(),ball.getRadius());
         if (sensorType.equals("gravity")){
             sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
-            calculator = new GravityLocationCalculator(sensorManager,sensor,state,movementRecognizer);
+            accelerometerLocationCalculator = new AccelerometerLocationCalculator(sensorManager,sensor,state,movementRecognizer);
         }
         else {
             state.setAngles(new Pair<>(0.0, 0.0));
             sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-            calculator = new GyroscopeLocationCalculator(sensorManager,sensor,state,movementRecognizer);
+            gyroscopeLocationCalculator = new GyroscopeLocationCalculator(sensorManager,sensor,state,movementRecognizer);
         }
     }
+
     @Override
     public void run() {
         super.run();
         while (running) {
             try {
-                Pair<Integer,Integer> ballPos = ball.getPosition();
-                view.updateBallPosition(ballPos.getFirst(),ballPos.getSecond());
-                Pair<Double, Double> pos = calculator.nextCoordinate(deltaT);
+                Pair<Float,Float> ballPos = ball.getPosition();
+                view.updateScreen();
+                Pair<Float, Float> pos = accelerometerLocationCalculator.nextCoordinate(deltaT);
                 ball.updateLocation(pos);
                 Thread.sleep(deltaT);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    public void pushBall(){
-        calculator.setVelocity();
     }
 
     public void endLoop(){
