@@ -19,28 +19,20 @@ public class GameLoop extends Thread{
     private GyroscopeLocationCalculator gyroscopeLocationCalculator;
     private int deltaT;
 
-    public GameLoop(PongView view, SensorManager sensorManager, String sensorType, int dt, Pair<Integer,Integer> screen){
+    public GameLoop(PongView view, int dt, Pair<Integer,Integer> screen){
         this.view = view;
         this.running = true;
         this.deltaT = dt;
         Sensor sensor;
-        Racket racket = new Racket(
-                view.getLeft() + view.getWidth() / 3,
-                view.getTop() + 3* view.getHeight() / 4,
-                view.getRight() - view.getWidth() / 3,
-                view.getBottom() - view.getHeight() / 4);
-        Ball ball = new Ball(view.getWidth() / 2,view.getHeight() / 2, view.getArcLeft());
+        racket = new Racket(
+                screen.first / 3,
+                10 + 3* screen.second / 4,
+                2* screen.first / 3,
+                3* screen.second / 4);
+        ball = new Ball(screen.first / 2,0, view.getArcLeft());
+        view.setBall(ball);
+        view.setRacket(racket);
 
-        MovementRecognizer movementRecognizer = new MovementRecognizer(screen.getFirst(),screen.getSecond(),ball.getRadius());
-        if (sensorType.equals("gravity")){
-            sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
-            accelerometerLocationCalculator = new AccelerometerLocationCalculator(sensorManager,sensor,state,movementRecognizer);
-        }
-        else {
-            state.setAngles(new Pair<>(0.0, 0.0));
-            sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-            gyroscopeLocationCalculator = new GyroscopeLocationCalculator(sensorManager,sensor,state,movementRecognizer);
-        }
     }
 
     @Override
@@ -48,10 +40,8 @@ public class GameLoop extends Thread{
         super.run();
         while (running) {
             try {
-                Pair<Float,Float> ballPos = ball.getPosition();
                 view.updateScreen();
-                Pair<Float, Float> pos = accelerometerLocationCalculator.nextCoordinate(deltaT);
-                ball.updateLocation(pos);
+                ball.update();
                 Thread.sleep(deltaT);
             } catch (Exception e) {
                 e.printStackTrace();

@@ -63,6 +63,14 @@ public class PongView extends View {
         otherPaint.setStyle(Paint.Style.FILL);
     }
 
+    public void setBall(Ball ball) {
+        this.ball = ball;
+    }
+
+    public void setRacket(Racket racket) {
+        this.racket = racket;
+    }
+
     // below method is use to generate px from DP.
     public static float pxFromDp(final Context context, final float dp) {
         return dp * context.getResources().getDisplayMetrics().density;
